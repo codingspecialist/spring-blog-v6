@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -21,12 +19,15 @@ public class BoardService {
     }
 
     public BoardResponse.UpdateFormDTO 게시글수정화면보기(int id) {
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 id의 게시글이 없습니다 : "+id));
+
         return new BoardResponse.UpdateFormDTO(board);
     }
 
     public BoardResponse.DetailDTO 게시글상세보기(int id) {
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 id의 게시글이 없습니다 : "+id));
         return new BoardResponse.DetailDTO(board);
     }
 
@@ -42,9 +43,11 @@ public class BoardService {
 
     @Transactional
     public void 게시글수정하기(int id, BoardRequest.UpdateDTO updateDTO) {
-        // 1. 게시글 조회, 2. 게시글 수정 권한, 3. 게시글 수정, 4. 수정된 엔티티 응답
-        boardRepository.update(id, updateDTO.getTitle(), updateDTO.getContent());
-    }
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 id의 게시글이 없습니다 : "+id));
+
+        board.update(updateDTO.getTitle(), updateDTO.getContent());
+    } // 영속화된 객체상태변경 - update + commit   => 더티체킹
 }
 
 
