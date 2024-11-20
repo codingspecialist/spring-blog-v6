@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,30 +15,38 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @PostMapping("/board/{id}/update")
+    public String update(@PathVariable("id") int id, BoardRequest.UpdateDTO updateDTO) {
+        boardService.게시글수정하기(id, updateDTO);
+
+        return "redirect:/board/" + id;
+    }
+
     @PostMapping("/board/{id}/delete")
     public String delete(@PathVariable("id") int id) {
         boardService.게시글삭제(id);
         return "redirect:/";
     }
 
-    @GetMapping("/save-form")
+    @GetMapping("/board/save-form")
     public String saveForm() {
         return "save-form";
     }
 
-    @PostMapping("/board/save")
-    public void save(BoardRequest.SaveDTO saveDTO, HttpServletResponse response) throws IOException { // x-www는 클래스로 받을 수 있다.
-        System.out.println(saveDTO); // @Data는 내부에 toString을 재정의해서 구현해준다.
-        boardService.게시글쓰기(saveDTO);
-        response.setStatus(302); // header 302
-        response.setHeader("Location", "/");
-        // return "redirect:/";
+    @GetMapping("/board/{id}/update-form")
+    public String updateForm(@PathVariable("id") int id, Model model) {
+        BoardResponse.UpdateFormDTO updateFormDTO = boardService.게시글수정화면보기(id);
+        model.addAttribute("model", updateFormDTO);
+        return "update-form";
     }
 
-    /**
-     * 쿼리스트링(where절) : /board?title=바다
-     * 패스변수(where절) :  /board/1
-     */
+    @PostMapping("/board/save")
+    public String save(BoardRequest.SaveDTO saveDTO) {
+        boardService.게시글쓰기(saveDTO);
+        return "redirect:/";
+    }
+
+
     @GetMapping("/board/{id}")
     public String detail(@PathVariable("id") int id, Model model) {
         BoardResponse.DetailDTO boardDetail = boardService.게시글상세보기(id);
