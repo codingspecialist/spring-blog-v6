@@ -1,12 +1,17 @@
 package com.example.blog.board;
 
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.blog._core.error.ex.Exception400;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -15,10 +20,15 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @PostMapping("/board/{id}/update")
-    public String update(@PathVariable("id") int id, BoardRequest.UpdateDTO updateDTO) {
-        boardService.게시글수정하기(id, updateDTO);
+    @PostMapping("/board/save")
+    public String save(@Valid BoardRequest.SaveDTO saveDTO, Errors errors) {
+        boardService.게시글쓰기(saveDTO);
+        return "redirect:/";
+    }
 
+    @PostMapping("/board/{id}/update")
+    public String update(@PathVariable("id") int id, @Valid BoardRequest.UpdateDTO updateDTO, Errors errors) {
+        boardService.게시글수정하기(id, updateDTO);
         return "redirect:/board/" + id;
     }
 
@@ -38,12 +48,6 @@ public class BoardController {
         BoardResponse.UpdateFormDTO updateFormDTO = boardService.게시글수정화면보기(id);
         model.addAttribute("model", updateFormDTO);
         return "update-form";
-    }
-
-    @PostMapping("/board/save")
-    public String save(BoardRequest.SaveDTO saveDTO) {
-        boardService.게시글쓰기(saveDTO);
-        return "redirect:/";
     }
 
 
