@@ -1,6 +1,7 @@
 package com.example.blog.board;
 
 import com.example.blog.user.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
