@@ -30,6 +30,7 @@ public class Reply {
     @CreationTimestamp
     private Timestamp createdAt;
 
+
     @Builder
     public Reply(Integer id, String comment, User user, Board board, Timestamp createdAt) {
         this.id = id;

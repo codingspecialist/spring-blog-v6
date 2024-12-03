@@ -1,5 +1,6 @@
 package com.example.blog.board;
 
+import com.example.blog.reply.Reply;
 import com.example.blog.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -23,6 +26,9 @@ public class Board {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+    
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER) // fk의 변수명이 머야?
+    private List<Reply> replies = new ArrayList<>();
 
     @CreationTimestamp
     private Timestamp createdAt;
