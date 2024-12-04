@@ -27,7 +27,7 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER) // fk의 변수명이 머야?
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY) // fk의 변수명이 머야?
     private List<Reply> replies = new ArrayList<>();
 
     @CreationTimestamp
@@ -41,9 +41,6 @@ public class Board {
         this.user = user;
         this.createdAt = createdAt;
     }
-
-
-
 
     public void update(String title, String content) {
         this.title = title;
